@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "publisher": "'roger vieira'",
     "engines": {
-        "vscode": "^1.26.0"
+        "vscode": "^1.90.0"
     },
     "categories": [
         "Other"
@@ -33,10 +33,9 @@
                     "type": "boolean",
                     "default": true
                 },
-                
                 "cognide.server": {
-                    "type" :"string",
-                    "default":"http://localhost:3000/metrics"
+                    "type": "string",
+                    "default": "http://localhost:3000/metrics"
                 }
             }
         }
@@ -48,13 +47,11 @@
         "watch": "tsc -watch -p ./"
     },
     "devDependencies": {
-        "@types/node": "10.3.6",
-        "@types/vscode": "^1.26.0",
-        "tslint": "5.10.0",
-        "typescript": "2.9.2",
-        "vscode": "^1.1.36"
+        "@types/node": "^24.3.0",
+        "@types/vscode": "^1.103.0",
+        "tslint": "^5.20.1"
     },
     "dependencies": {
-        "node-fetch": "^2.6.0"
+        "node-fetch": "~2.6.0"
     }
 }
