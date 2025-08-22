@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { url } from 'inspector';
 
 const fetch = require("node-fetch");
 
