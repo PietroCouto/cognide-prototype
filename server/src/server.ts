@@ -2,9 +2,11 @@ var net = require('net')
 var express = require("express");
 var app = express();
 var client = new net.Socket();
-var Influx = require('influx');
 
-import { ThinkGearAdapter } from "./adapter/ThinkGear/ThinkGearAdapter"
+import dotenv from 'dotenv'
+
+dotenv.config({path: './src/infrastructure/.env'});
+
 import { IMeasurement } from "./models/IMeasurement";
 import { IAdapter } from "./adapter/IAdapter";
 import { IRecorder } from "./recorder/IRecorder";

@@ -1,5 +1,5 @@
 import { IMetricEntity } from './IMetricEntity'
 
 export interface IRecorder {
-    Save(metricEntity: IMetricEntity): Boolean;
+    Save(metricEntity: IMetricEntity): Promise<boolean>;
 }

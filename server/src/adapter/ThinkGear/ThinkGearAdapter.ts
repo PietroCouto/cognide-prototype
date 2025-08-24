@@ -1,12 +1,6 @@
 import { IAdapter } from "../IAdapter"
 import { IMeasurement } from "../../models/IMeasurement";
 import { Socket } from "net"
-import { Measurement } from "../../models/Measurement";
-import { IConfig } from "../../config/IConfig";
-
-
-
-
 
 export class ThinkGearAdapter implements IAdapter {
 
@@ -51,7 +45,7 @@ export class ThinkGearAdapter implements IAdapter {
 
     public getMetrics(): IMeasurement {
 
-        let sharedData: string;
+        let sharedData: IMeasurement =  {} as IMeasurement;
 
 
         this.client.setEncoding('utf-8');
@@ -68,9 +62,10 @@ export class ThinkGearAdapter implements IAdapter {
 
             sharedData = JSON.parse(rawData);
 
+            return sharedData;
         });
 
-  
 
+        return sharedData
     }
 }

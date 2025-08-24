@@ -1,66 +1,46 @@
-import { InfluxDB, IPoint, FieldType } from 'influx'
+import { InfluxDBClient, Point } from '@influxdata/influxdb3-client';
 import { IRecorder } from '../IRecorder'
-import { InfluxDBEntity } from './InfluxDBEntity'
 import { IMetricEntity } from '../IMetricEntity'
-
 
 export class InfluxDBRecorder implements IRecorder {
 
-    private client: InfluxDB;
-    // public readonly CONNECTION: string = 'http://:@host:8086/cognide';
+    private client: InfluxDBClient;
 
-    public readonly HOSTNAME = 'localhost';
-    public readonly PORT = 8086;
-    public readonly DATABASE = 'cognide';
+    /**
+     * Set InfluxDB credentials
+     */
+    private readonly host = process.env.INFLUXDB_HOST || "";
+    private readonly database = process.env.INFLUXDB_DATABASE || "";
+    private readonly token = process.env.INFLUXDB_TOKEN || "";
+    private readonly orgId = process.env.INFLUXDB_ORG_ID || "";
 
     /**
      *
      */
     constructor() {
-
-        this.client = new InfluxDB({
-            host: this.HOSTNAME,
-            port: this.PORT,
-            database: this.DATABASE,
-            schema: [
-                {
-                    measurement: 'psychometrics',
-                    fields: {
-                        attention: FieldType.FLOAT,
-                        meditation: FieldType.FLOAT
-                    },
-                    tags: [
-                        "clientId", "artifactName", "lineNumber"
-                    ]
-                }
-            ]
+        this.client = new InfluxDBClient({
+            host: this.host,
+            database: this.database,
+            token: this.token,
         })
-    }
+  }
 
     /**
      *
      */
-    Save(metricEntity: IMetricEntity): boolean {
+    async Save(metricEntity: IMetricEntity): Promise<boolean> {
 
-        console.debug("Saving metrics into InfluxDB.")
+        console.debug("Saving metrics into InfluxDB: ", JSON.stringify(metricEntity))
 
         try {
-            this.client.writePoints(
-                [
-                    {
-                        measurement: "psycho-set",
-                        tags: {
-                            clientId: metricEntity.ClientId,
-                            artifactName: metricEntity.ArtifactName,
-                            lineNumber: String(metricEntity.LineNumber)
-                        },
-                        fields: {
-                            attention: metricEntity.Attention,
-                            meditation: metricEntity.Meditation
-                        }
-                    }
-                ]
-            );
+            const point = Point.measurement('psychometrics')
+            .setTag("clientId", metricEntity.ClientId)
+            .setTag("artifactName", metricEntity.ArtifactName)
+            .setTag("lineNumber", metricEntity.LineNumber)
+            .setFloatField("attention", metricEntity.Attention)
+            .setFloatField("meditation", metricEntity.Meditation);
+
+            await this.client.write(point, this.database, this.orgId);
 
             return true;
 

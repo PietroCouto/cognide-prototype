@@ -1,10 +1,8 @@
-import { IPoint } from "influx";
-
 export interface IMetricEntity {
 
     ClientId: string;
     ArtifactName: string;
-    LineNumber: number;
+    LineNumber: string;
     Attention: number;
     Meditation: number;
 }
