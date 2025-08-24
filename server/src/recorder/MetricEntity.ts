@@ -9,7 +9,7 @@ export class MetricEntity implements IMetricEntity {
     Meditation: number;
 
     /**
-     *
+     * Constructor
      */
     constructor(clientId: string, artifactName: string, lineNumber: string, attention: number, meditation: number) {
         this.ClientId = clientId;
