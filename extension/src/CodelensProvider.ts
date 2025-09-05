@@ -27,14 +27,17 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 
         if (vscode.workspace.getConfiguration("cognide").get("enableCodeLens", true)) {
             this.codeLenses = [];
+
             const regex = new RegExp(this.regex);
             const text = document.getText();
             let matches;
+
             while ((matches = regex.exec(text)) !== null) {
                 let line = document.lineAt(document.positionAt(matches.index).line);
                 let indexOf = line.text.indexOf(matches[0]);
                 let position = new vscode.Position(line.lineNumber, indexOf);
                 let range = document.getWordRangeAtPosition(position, new RegExp(this.regex));
+
                 if (range) {
                     this.codeLenses.push(new vscode.CodeLens(range));
                 }
@@ -51,9 +54,8 @@ export class CodelensProvider implements vscode.CodeLensProvider {
             var response = await fetch(URI);
             var metrics = await response.json()
 
-            //console.log('Creating command...' + data(uri));
             codeLens.command = {
-                title: `CognIDE Metrics [Attention: ${metrics.eSense.attention.toFixed(2)}%][Meditation: ${metrics.eSense.meditation.toFixed(2)}%]` ,
+                title: `CognIDE Metrics [Attention: ${metrics.attention.toFixed(2)}%][Meditation: ${metrics.meditation.toFixed(2)}%]`,
                 tooltip: "More informations",
                 command: "cognide.codelensAction",
                 arguments: [codeLens.range.start.line, metrics]
