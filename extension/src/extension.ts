@@ -25,8 +25,8 @@ export function activate(context: ExtensionContext) {
 
 
         window.showInformationMessage(`Line: ${line} 
-        \nAttention: ${metrics.eSense.attention} 
-        \nMeditation: ${metrics.eSense.meditation}
+        \nAttention: ${metrics.attention} 
+        \nMeditation: ${metrics.meditation}
         \nPoorSignalLevel: ${metrics.poorSignalLevel}
         \nStatus: ${metrics.status}` );
         
