@@ -30,9 +30,26 @@ app.listen(3000, () => {
 // =================================  CLIENT REQUESTS  ============================== //
 
 // http://localhost:3000/metrics?clientId=123&artifactName=helloWorld.js&lineNumber=24
+
+/**
+ * Request to query data from the database
+ */
 app.get("/metrics", (req: any, res: any, next: any) => {
 
     var request: IMetricRequest = req.query;
+    console.info(`Received request from CognIDE Extension: ${JSON.stringify(request)}`);
+
+    const measurement = recorder.QueryMetrics(request.artifactName);
+
+    res.send(JSON.stringify(measurement));
+});
+
+/**
+ * Request to insert data into the database
+ */
+app.post("/metrics", (req: any, res: any, next: any) => {
+    var request: IMetricRequest = req.query;
+
     console.info(`Received request from CognIDE Extension: ${JSON.stringify(request)}`);
 
     var measurement: IMeasurement = adapter.getMetrics();
@@ -47,9 +64,8 @@ app.get("/metrics", (req: any, res: any, next: any) => {
     );
 
     recorder.Save(metric);
-    res.send(JSON.stringify(measurement));
 
-
+    res.send("OK")
 });
 
 client.on("close", () => {

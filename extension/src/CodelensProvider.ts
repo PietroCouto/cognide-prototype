@@ -23,8 +23,13 @@ export class CodelensProvider implements vscode.CodeLensProvider {
         });
     }
 
+    /**
+     * Provides CodeLens for the given document.
+     * @param document The document to provide CodeLens for.
+     * @param token The cancellation token.
+     * @returns An array of CodeLens or a promise that resolves to an array of CodeLens.
+     */
     public provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-
         if (vscode.workspace.getConfiguration("cognide").get("enableCodeLens", true)) {
             this.codeLenses = [];
 
@@ -33,10 +38,10 @@ export class CodelensProvider implements vscode.CodeLensProvider {
             let matches;
 
             while ((matches = regex.exec(text)) !== null) {
-                let line = document.lineAt(document.positionAt(matches.index).line);
-                let indexOf = line.text.indexOf(matches[0]);
-                let position = new vscode.Position(line.lineNumber, indexOf);
-                let range = document.getWordRangeAtPosition(position, new RegExp(this.regex));
+                const line = document.lineAt(document.positionAt(matches.index).line);
+                const indexOf = line.text.indexOf(matches[0]);
+                const position = new vscode.Position(line.lineNumber, indexOf);
+                const range = document.getWordRangeAtPosition(position, new RegExp(this.regex));
 
                 if (range) {
                     this.codeLenses.push(new vscode.CodeLens(range));
@@ -44,18 +49,25 @@ export class CodelensProvider implements vscode.CodeLensProvider {
             }
             return this.codeLenses;
         }
+
         return [];
     }
 
+    /**
+     * Resolves the CodeLens by fetching metrics from the server.
+     * @param codeLens The CodeLens to resolve.
+     * @param token The cancellation token.
+     * @returns The resolved CodeLens or null if not resolved.
+     */
     public async resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
         if (vscode.workspace.getConfiguration("cognide").get("enableCodeLens", true)) {
+            const fileName = vscode.window.activeTextEditor?.document.fileName.split('/').pop();
 
-
-            var response = await fetch(URI);
-            var metrics = await response.json()
+            const response = await fetch(URI + "?artifactName=" + fileName);
+            const metrics = await response.json();
 
             codeLens.command = {
-                title: `CognIDE Metrics [Attention: ${metrics.attention.toFixed(2)}%][Meditation: ${metrics.meditation.toFixed(2)}%]`,
+                title: `CognIDE Metrics [File: ${fileName}][Attention: ${metrics.attention.toFixed(2)}%][Meditation: ${metrics.meditation.toFixed(2)}%]`,
                 tooltip: "More informations",
                 command: "cognide.codelensAction",
                 arguments: [codeLens.range.start.line, metrics]

@@ -3,7 +3,7 @@ import { IRecorder } from '../IRecorder'
 import { IMetricEntity } from '../IMetricEntity'
 
 /**
- * Class for recording metrics to InfluxDB
+ * Class to interact with InfluxDB
  */
 export class InfluxDBRecorder implements IRecorder {
 
@@ -32,7 +32,7 @@ export class InfluxDBRecorder implements IRecorder {
             database: this.database,
             token: this.token,
         })
-  }
+    }
 
     /**
      * Save metrics to InfluxDB
@@ -63,6 +63,26 @@ export class InfluxDBRecorder implements IRecorder {
         } catch (error) {
             console.error(`As error occurred while saving metrics into InfluxDB: ${error}`);
             return false
+        }
+    }
+
+    /**
+     * Query metrics from InfluxDB 
+     * @param artifactName - The artifact name to query
+     * @returns The measurement or null if not found
+     * @example recorder.QueryMetrics("test.ts")
+     */
+    async QueryMetrics(artifactName: string): Promise<IMetricEntity | null> {
+        console.debug("Querying metrics from InfluxDB");
+
+        try {
+            const queryResult = this.client.query('SELECT * FROM "psychometrics"', this.database)
+            
+            console.log(await queryResult.next())
+            return null
+        } catch (error) {
+            console.error(`As error occurred while querying metrics from InfluxDB: ${error}`);
+            return null
         }
     }
 }
